@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Subject} from 'rxjs/Rx';
 import { BaseService } from './base.service';
+import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class PostsService extends BaseService {
@@ -9,7 +9,7 @@ export class PostsService extends BaseService {
   // overload to type to our specific Type
   protected _subject$: Subject<Array<Post>>;
 
-  constructor(protected http: Http) {
+  constructor(protected http: HttpClient) {
     super(http);
 
     const options = {

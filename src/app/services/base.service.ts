@@ -1,8 +1,8 @@
-import { Http } from '@angular/http';
-import { Subject} from 'rxjs/Rx';
-import { environment } from '../../environments/environment';
+import { Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
-export class BaseService {
+export class BaseService<T =  any> {
 
   // store internal options that may be relevant to your project
   protected options: {
@@ -13,7 +13,7 @@ export class BaseService {
   protected baseUrl: string;
 
   // retreive reference to http and set baseUrl
-  constructor(protected http: Http) {
+  constructor(protected http: HttpClient) {
     this.baseUrl = environment.baseUrl;
   }
 
@@ -31,8 +31,8 @@ export class BaseService {
   // called whenever our data changes, will retreive latest and inform all our components who have subscribed
   protected load(entity?: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.get(this.formUrl(entity)).map(response => response.json()).subscribe(
-        data => {
+      this.http.get(this.formUrl(entity)).subscribe(
+        (data: any) => {
           data = [].concat(data);  // ensure we are returning an array
           this._subject$.next(data);
           resolve(data);
@@ -40,14 +40,14 @@ export class BaseService {
         error => {
           this.handleError(error);
           reject(error);
-        })
+        });
     });
   }
 
   // http.post
   protected addEntity(entity: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.post(this.formUrl(entity), entity).map(response => response.json()).subscribe(
+      this.http.post(this.formUrl(entity), entity).subscribe(
         data => {
           this.load();
           resolve(data);
@@ -61,7 +61,7 @@ export class BaseService {
   // http.put
   protected updateEntity(entity: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.put(this.formUrl(entity), entity).map(response => response.json()).subscribe(
+      this.http.put(this.formUrl(entity), entity).subscribe(
         data => {
           this.load();
           resolve(data);
@@ -69,7 +69,7 @@ export class BaseService {
         err => {
           reject(err);
         });
-      });
+    });
   }
 
   // http.delete
